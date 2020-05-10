@@ -1,0 +1,6 @@
+name,symbol,smiles
+Adenine,C5H5N5,C1=NC2=NC=NC(=C2N1)N
+Guanine,C5H5N5O,C1=NC2=C(N1)C(=O)NC(=N2)N
+Cytosine,C4H5N3O,c1cnc(=O)[nH]c1N
+Thymine,C5H6N202,Cc1c[nH]c(=O)[nH]c1=O
+Uracil,C4H4N202,c1c[nH]c(=O)[nH]c1=O
