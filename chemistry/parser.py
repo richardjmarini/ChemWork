@@ -27,7 +27,7 @@ class Parser(object):
             if fmt in self.__class__.__dict__.keys():
                 self.input_stream= getattr(self.__class__, fmt)
                 grammer= open(filename, 'r').read()
-                transformer= Smiles()
+                self.transformer= Smiles()
             else:
                 continue
 
@@ -35,7 +35,8 @@ class Parser(object):
                 grammer,
                 parser= "lalr",
                 debug= False,
-                transformer= transformer
+                transformer= self.transformer,
+                keep_all_tokens= True
             )
 
     def get_elements(self):
@@ -49,6 +50,14 @@ class Parser(object):
            raise
 
         print('\n')
-        for blah in tree.children:
-            print('>>>', blah)
+        print(tree.pretty())
+
+        """
+        for node in tree.children:
+            print(node.__dict__)
+            if node.data == 'atom': 
+                print(self.transformer.atom(node.children[0]))
+            else:
+                print(node.data, node.children)
+        """
 

@@ -6,11 +6,13 @@ from .registery import RegisterSubClasses
 class Element(object, metaclass= RegisterSubClasses):
 
     def __init__(self, *args, **kwargs):
-       
+
        self.id= id(self)
        self.electrons= [Electron()] * int(self.atomic_number)
        self.protons= [Proton()] * int(self.atomic_number)
        self.neutrons= [Neutron()] * abs(int(self.atomic_number) - int(float(self.atomic_mass)))
+  
+       self.bonds= []
 
     def __str__(self):
 
@@ -19,5 +21,3 @@ class Element(object, metaclass= RegisterSubClasses):
             label= getattr(self, 'symbol')
 
         return '%s (id= %s)' % (label, self.id)
-
-
