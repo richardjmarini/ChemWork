@@ -51,13 +51,3 @@ class Parser(object):
 
         print('\n')
         print(tree.pretty())
-
-        """
-        for node in tree.children:
-            print(node.__dict__)
-            if node.data == 'atom': 
-                print(self.transformer.atom(node.children[0]))
-            else:
-                print(node.data, node.children)
-        """
-

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from uuid import uuid4
 from .registery import RegisterSubClasses
 
 class Bond(object, metaclass= RegisterSubClasses):
@@ -8,7 +9,7 @@ class Bond(object, metaclass= RegisterSubClasses):
 
         super(Bond, self).__init__()
 
-        self.id= id(self)
+        self.id= uuid4() #id(self)
         self.elements= elements
         self.number_of_electrons= number_of_electrons
 

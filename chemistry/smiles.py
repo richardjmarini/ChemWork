@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from networkx import Graph
+from networkx import MultiGraph, path_graph
 from lark import Transformer, v_args, Token, Tree
 from logging import getLogger
 
@@ -23,16 +23,21 @@ class Smiles(Transformer):
 
         super(Smiles, self).__init__()
 
-        self.ring_number= None
         self.previous_element= None
         self.current_bond= None
+        self.ring_number= None
         self.rings= {}
+
+        # should this be a seperate meta class that various
+        # parsers can use? 
+        self.graph= MultiGraph()
 
     @v_args(inline= True)
     def atom(self, token):
 
         # create element we found 
         token.value= getattr(chemistry, token.value)()
+        self.graph.add_node(token.value)
         print('created element:', token.value)
 
         if self.ring_number is not None and self.ring_number in self.rings:
@@ -40,13 +45,17 @@ class Smiles(Transformer):
            # and if this is the last element in an existing ring 
            # then bond the element to the element at the start of the ring
 
-           elements=  [token.value, self.rings.get(self.ring_number)]
+           elements=  [self.rings.get(self.ring_number), token.value]
 
-           bond= getattr(chemistry, 'Covalent')(elements, 1)
+           # TODO: determine number of electrons to use (defaulting to single for now)
+           bond= getattr(chemistry, 'Covalent')(elements, Smiles.ELECTRON_MAP.get('=', 1))
            for element in elements:
                element.bonds.append(bond)
 
-           print('creating ring bond %s with elements: %s' % (self.ring_number, [element, token.value]))
+           # TODO: how do we we double and triple bonds?
+           self.graph.add_edges_from([elements, ])
+
+           print('creating ring bond %s with elements: %s\n' % (self.ring_number, list(map(str, elements))))
            del self.rings[self.ring_number]
 
         else:
@@ -67,7 +76,10 @@ class Smiles(Transformer):
             for element in self.current_bond.elements:
                 element.bonds.append(self.current_bond)
 
-            print('bonding elements: ', self.current_bond.elements, 'with', self.current_bond.number_of_electrons, 'electrons')
+           # TODO: how do we we double and triple bonds?
+            self.graph.add_edges_from([self.current_bond.elements,])
+
+            print('bonding elements: %s with Bond(id= %s, number_of_electrons= %s)' % (list(map(str, self.current_bond.elements)), self.current_bond.id, self.current_bond.number_of_electrons))
             self.current_bond= None
 
         # clear the current ring number and set the previous element
@@ -91,13 +103,14 @@ class Smiles(Transformer):
 
     def branch(self, tokens):
 
-       print('FOUND branch:')
-       for token in tokens:
+       print('BRANCED FROM PREVIOUS', self.previous_element)
+       print('FOUND branch:', tokens)
+       for token in tokens[1:-1]:
            if type(token) == Token:
-               print('\t', token.value)
+               print('\t>', token.value)
            elif type(token) == Tree:
                for _token in token.children:
-                   print('\t', _token)
+                   print('\t<', _token)
  
        return token
 
