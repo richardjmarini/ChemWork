@@ -19,3 +19,7 @@ class Bond(object, metaclass= RegisterSubClasses):
 
         return '%s (id= %s, number_of_electrons= %s)' % (label, self.id, self.number_of_electrons)
 
+    def __repr__(self):
+
+        return str(self)
+

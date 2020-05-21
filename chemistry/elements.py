@@ -23,6 +23,8 @@ class Element(object, metaclass= RegisterSubClasses):
             label= getattr(self, 'symbol')
 
         return '%s (id= %s)' % (label, self.id)
+        #return self.symbol
 
-    def __len__(self):
-        return 10
+    def __repr__(self):
+
+       return str(self)

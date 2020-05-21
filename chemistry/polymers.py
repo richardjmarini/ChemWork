@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from uuid import uuid4
-from networkx import draw, spring_layout
+from networkx import draw, spring_layout, spiral_layout
 import matplotlib.pyplot as plt
 
 from .registery import RegisterSubClasses
@@ -28,11 +28,13 @@ class Polymer(Parser, metaclass= RegisterSubClasses):
         return '%s (id= %s)' % (label, self.id)
 
 
+
 def show(polymer):
 
     draw(
         polymer.transformer.graph,
         with_labels= True,
-        font_size= 8
+        font_size= 8,
+        layout= spring_layout(polymer.transformer.graph)
     )
     plt.show()
